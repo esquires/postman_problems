@@ -176,17 +176,18 @@ def cpp(edgelist_filename, start_node=None, edge_weight='distance', verbose=Fals
         # use g - must ensure that format matches the expected format
         g = nx.MultiGraph(g)
         # check for all needed fields - if id is not set it will be set manually
-        shared_keys = set.intersection(*[set(z.keys()) for x,y,z in list(g.edges(data=True))])
-        if edge_weight not in shared_keys:
-            raise ValueError("g must include value for '{}' for every edge".format(edge_weight))
-        if id not in shared_keys:
-            # create new id
-            for ii, edg in enumerate(g.edges(keys=True)):
-                g.edges[edg]['id'] = ii
-        else:
-            # id is already specified - ensure that it is unique
-            if len({edg[3]['id'] for edg in g.edges(keys=True, data=True)}) != g.number_of_edges():
-                raise ValueError("If id is specified on edges of g it must be unique!")
+    
+    shared_keys = set.intersection(*[set(z.keys()) for x,y,z in list(g.edges(data=True))])
+    if edge_weight not in shared_keys:
+        raise ValueError("g must include value for '{}' for every edge".format(edge_weight))
+    if id not in shared_keys:
+        # create new id
+        for ii, edg in enumerate(g.edges(keys=True)):
+            g.edges[edg]['id'] = ii
+    else:
+        # id is already specified - ensure that it is unique
+        if len({edg[3]['id'] for edg in g.edges(keys=True, data=True)}) != g.number_of_edges():
+            raise ValueError("If id is specified on edges of g it must be unique!")
 
     logger_cpp.info('get augmenting path for odd nodes')
     odd_nodes = get_odd_nodes(g)
